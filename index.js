@@ -61,3 +61,40 @@ const server = http.createServer((request, response) => {
 server.listen(port1, () => {
   console.log(`listening on port: ${port1}`);
 });
+
+const port2 = 8082;
+
+const express = require("express");
+const getCurrencies = require("./controllers/currencies.controllers");
+
+const expressCurrency = express();
+
+expressCurrency.get("/", (request, response) => {
+  response.write("<h1>Currency Dashboard</h1>");
+});
+
+expressCurrency.get("/server", (request, response) => {
+  response.json(serverInfo);
+});
+
+expressCurrency.get("/currencies", getCurrencies);
+
+expressCurrency.get("/currencies/:symbol", (request, response) => {
+  const { symbol } = request.params;
+  const findCurrency = currencyInfo.data.find(
+    (x) => x.id?.toLowerCase() === symbol.toLowerCase()
+  );
+  if (findCurrency) {
+    response.status(200).json(findCurrency);
+  } else {
+    response.status(404).json({ message: "Currency not found" });
+  }
+});
+
+// expressCurrency.post("/currency", (request, response) => {
+//   console.log(request.url, request.body);
+// });
+
+expressCurrency.listen(port2, () => {
+  console.log(`listening on port: ${port2}`);
+});
