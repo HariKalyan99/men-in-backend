@@ -1,5 +1,4 @@
 const usersInfo = require("../users.json");
-const getQueryErrors = require("../validators/users.validators");
 
 // const Joi = require("joi");
 
@@ -22,11 +21,11 @@ const getUsers = (request, response) => {
 const getUsersByGenderAndAge = (request, response) => {
   const { gender, age } = request.query;
 
-  const error = getQueryErrors({ gender, age });
+  // const error = getQueryErrors({ gender, age });
 
-  if (error) {
-    return response.status(422).json(error);
-  }
+  // if (error) {
+  //   return response.status(422).json(error);
+  // }
   if (gender && age) {
     const getUserGenderAndAge = usersInfo.data.filter(
       (x) => x.gender === gender && x.dob.age === Number(age)

@@ -69,9 +69,11 @@ const express = require("express");
 
 const currencyRouter = require("./ROUTES/currencies.routes");
 const usersRouter = require("./routes/users.routes");
+const verifyAuth = require("./middlewares/verifyAuth");
 
 const expressCurrency = express();
 
+expressCurrency.use(verifyAuth);
 expressCurrency.use("/", currencyRouter);
 
 expressCurrency.listen(port2, () => {

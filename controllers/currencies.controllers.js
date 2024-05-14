@@ -1,5 +1,5 @@
 const currencyInfo = require("../currencies.json");
-let PASSWORD = process.env.ROUTE_PASSWORD;
+// let PASSWORD = process.env.ROUTE_PASSWORD;
 
 const serverInfo = {
   serverName: "Crio Server",
@@ -20,12 +20,6 @@ const getCurrencies = (request, response) => {
   // response.send("<h1>Currency Info</h1>");
   // response.json(currencyInfo);
   // response.sendStatus(200);
-
-  const authorization = request.headers["authorization"];
-
-  if (!authorization || authorization !== PASSWORD) {
-    return response.status(403).json({ message: "Unauthorization request" });
-  }
 
   let queryParams = request.query;
   const { minSize } = queryParams;
