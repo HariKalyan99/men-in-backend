@@ -1,6 +1,8 @@
 const http = require("http");
 const port1 = 8081;
 const currencyInfo = require("./currencies.json");
+const usersInfo = require("./users.json");
+require("dotenv").config(); //this is helpful for normalizing the env variables and access it accross any cross-platforms
 
 const serverInfo = {
   serverName: "Crio Server",
@@ -63,38 +65,25 @@ server.listen(port1, () => {
 });
 
 const port2 = 8082;
-
 const express = require("express");
-const getCurrencies = require("./controllers/currencies.controllers");
+
+const currencyRouter = require("./ROUTES/currencies.routes");
+const usersRouter = require("./routes/users.routes");
 
 const expressCurrency = express();
 
-expressCurrency.get("/", (request, response) => {
-  response.write("<h1>Currency Dashboard</h1>");
-});
-
-expressCurrency.get("/server", (request, response) => {
-  response.json(serverInfo);
-});
-
-expressCurrency.get("/currencies", getCurrencies);
-
-expressCurrency.get("/currencies/:symbol", (request, response) => {
-  const { symbol } = request.params;
-  const findCurrency = currencyInfo.data.find(
-    (x) => x.id?.toLowerCase() === symbol.toLowerCase()
-  );
-  if (findCurrency) {
-    response.status(200).json(findCurrency);
-  } else {
-    response.status(404).json({ message: "Currency not found" });
-  }
-});
-
-// expressCurrency.post("/currency", (request, response) => {
-//   console.log(request.url, request.body);
-// });
+expressCurrency.use("/", currencyRouter);
 
 expressCurrency.listen(port2, () => {
   console.log(`listening on port: ${port2}`);
+});
+
+const port3 = 8083;
+
+const expressUsers = express();
+
+expressUsers.use("/", usersRouter);
+
+expressUsers.listen(port3, () => {
+  console.log(`Listening on port: ${port3}`);
 });

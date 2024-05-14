@@ -1,4 +1,6 @@
 const currencyInfo = require("../currencies.json");
+let PASSWORD = process.env.ROUTE_PASSWORD;
+
 const serverInfo = {
   serverName: "Crio Server",
   version: "1.0.0",
@@ -6,10 +8,24 @@ const serverInfo = {
   currentTime: new Date().toTimeString(),
 };
 
+const getServer = (request, response) => {
+  response.json(serverInfo);
+};
+
+const getDashBoard = (request, response) => {
+  response.write("<h1>Currency Dashboard</h1>");
+};
+
 const getCurrencies = (request, response) => {
   // response.send("<h1>Currency Info</h1>");
   // response.json(currencyInfo);
   // response.sendStatus(200);
+
+  const authorization = request.headers["authorization"];
+
+  if (!authorization || authorization !== PASSWORD) {
+    return response.status(403).json({ message: "Unauthorization request" });
+  }
 
   let queryParams = request.query;
   const { minSize } = queryParams;
@@ -29,4 +45,21 @@ const getCurrencies = (request, response) => {
   }
 };
 
-module.exports = getCurrencies;
+const getCurrencyBySymbol = (request, response) => {
+  const { symbol } = request.params;
+  const findCurrency = currencyInfo.data.find(
+    (x) => x.id?.toLowerCase() === symbol.toLowerCase()
+  );
+  if (findCurrency) {
+    response.status(200).json(findCurrency);
+  } else {
+    response.status(404).json({ message: "Currency not found" });
+  }
+};
+
+module.exports = {
+  getCurrencies,
+  getDashBoard,
+  getCurrencyBySymbol,
+  getServer,
+};
