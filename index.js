@@ -10,6 +10,8 @@ const serverInfo = {
   currentDate: new Date().toDateString(),
   currentTime: new Date().toTimeString(),
 };
+const mongoose = require("mongoose"); //this is a object modelling library, which has a relational b/w databases, builds a schema validation for data types in the application layer and converts bson to json.
+const DB_URI = "mongodb://localhost:27017";
 
 const server = http.createServer((request, response) => {
   if (request.method === "GET") {
@@ -60,25 +62,18 @@ const server = http.createServer((request, response) => {
   }
 });
 
-server.listen(port1, () => {
-  console.log(`listening on port: ${port1}`);
-});
-
 const port2 = 8082;
 const express = require("express");
 
 const currencyRouter = require("./ROUTES/currencies.routes");
 const usersRouter = require("./routes/users.routes");
 const verifyAuth = require("./middlewares/verifyAuth");
+const blogsRouter = require("./routes/blogs.routes");
 
 const expressCurrency = express();
 
 expressCurrency.use(verifyAuth);
 expressCurrency.use("/", currencyRouter);
-
-expressCurrency.listen(port2, () => {
-  console.log(`listening on port: ${port2}`);
-});
 
 const port3 = 8083;
 
@@ -86,6 +81,34 @@ const expressUsers = express();
 
 expressUsers.use("/", usersRouter);
 
-expressUsers.listen(port3, () => {
-  console.log(`Listening on port: ${port3}`);
-});
+const port4 = 8084;
+const expressBlogs = express();
+
+// expressBlogs.use(verifyAuth);
+expressBlogs.use(express.json());
+expressBlogs.use("/blogs", blogsRouter);
+
+mongoose
+  .connect(DB_URI)
+  .then(() => {
+    console.log("db connection is suucessfull");
+
+    server.listen(port1, () => {
+      console.log(`listening on port: ${port1}`);
+    });
+
+    expressCurrency.listen(port2, () => {
+      console.log(`listening on port: ${port2}`);
+    });
+
+    expressUsers.listen(port3, () => {
+      console.log(`Listening on port: ${port3}`);
+    });
+
+    expressBlogs.listen(port4, () => {
+      console.log(`Listening the mongodb server on port ${port4}`);
+    });
+  })
+  .catch(() => {
+    console.log("connection failed to connect to mongoDb");
+  });
