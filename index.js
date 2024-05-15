@@ -12,6 +12,7 @@ const serverInfo = {
 };
 const mongoose = require("mongoose"); //this is a object modelling library, which has a relational b/w databases, builds a schema validation for data types in the application layer and converts bson to json.
 const DB_URI = "mongodb://localhost:27017";
+// const DB_URI = "mongodb://localhost:27017/mydb"; for the new database added along with its database name as/mydb by default it would be test
 
 const server = http.createServer((request, response) => {
   if (request.method === "GET") {
@@ -69,6 +70,7 @@ const currencyRouter = require("./ROUTES/currencies.routes");
 const usersRouter = require("./routes/users.routes");
 const verifyAuth = require("./middlewares/verifyAuth");
 const blogsRouter = require("./routes/blogs.routes");
+const postsRouter = require("./routes/posts.routes");
 
 const expressCurrency = express();
 
@@ -87,6 +89,12 @@ const expressBlogs = express();
 // expressBlogs.use(verifyAuth);
 expressBlogs.use(express.json());
 expressBlogs.use("/blogs", blogsRouter);
+
+const port5 = 8085;
+
+const expressPosts = express();
+
+expressPosts.use("/", postsRouter);
 
 mongoose
   .connect(DB_URI)
@@ -107,6 +115,10 @@ mongoose
 
     expressBlogs.listen(port4, () => {
       console.log(`Listening the mongodb server on port ${port4}`);
+    });
+
+    expressPosts.listen(port5, () => {
+      console.log(`Listening the mongodb postserver on port ${port5}`);
     });
   })
   .catch(() => {
